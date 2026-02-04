@@ -11,3 +11,6 @@ models/
 # IDE
 .idea/
 .vscode/
+
+test/videos/*.srt
+.claude
