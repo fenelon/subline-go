@@ -2,7 +2,6 @@
 
 Generate subtitles for any video or audio file using [whisper.cpp](https://github.com/ggerganov/whisper.cpp), with Metal GPU acceleration on macOS.
 
-<img width="912" height="744" alt="SCR-20260204-tyrd" src="https://github.com/user-attachments/assets/0622fa4f-cd35-4365-8920-f7b3a5b8b19c" />
 <img width="912" height="744" alt="SCR-20260204-tzho" src="https://github.com/user-attachments/assets/e8fdf01e-496a-4e31-9df7-e0d29827e3ae" />
 
 ## Features
@@ -32,15 +31,15 @@ Paths can be individual files or directories (all media files inside will be pro
 
 ### Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-l, --language` | Language code, e.g. `en`, `ru`, `de` | auto-detect |
-| `-m, --model` | Whisper model: `tiny`, `base`, `small`, `medium`, `turbo`, `large` | `turbo` |
-| `-a, --audio-track` | Audio stream index | auto-detect |
-| `-f, --format` | Output format: `srt` or `vtt` | `srt` |
-| `-o, --output-dir` | Directory for subtitle files | next to source |
-| `-s, --skip-existing` | Skip files that already have subtitles | off |
-| `-v, --verbose` | Show whisper.cpp engine output | off |
+| Flag | Values | Description | Default |
+|------|--------|-------------|---------|
+| `-l, --language` | `en`, `ru`, `de`, `fr`, ... ([ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)) | Language code | auto-detect |
+| `-m, --model` | `tiny`, `base`, `small`, `medium`, `turbo`, `large` | Whisper model | `turbo` |
+| `-a, --audio-track` | `0`, `1`, `2`, ... | Audio stream index | auto-detect |
+| `-f, --format` | `srt`, `vtt` | Output subtitle format | `srt` |
+| `-o, --output-dir` | path | Directory for subtitle files | next to source |
+| `-s, --skip-existing` | | Skip files that already have subtitles | |
+| `-v, --verbose` | | Show whisper.cpp engine output | |
 
 ### Examples
 
