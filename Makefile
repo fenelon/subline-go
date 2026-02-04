@@ -32,7 +32,7 @@ ifeq ($(UNAME_S),Darwin)
   WHISPER_PLATFORM_FLAGS := -DGGML_METAL=ON -DGGML_METAL_EMBED_LIBRARY=ON
   PLATFORM_LDFLAGS := -framework Accelerate -framework Metal -framework Foundation -framework CoreGraphics
   # On Apple Silicon, ggml-metal is built; on Linux it is not.
-  WHISPER_METAL_LIB = $(WHISPER_BUILD)/ggml/src/libggml-metal.a
+  WHISPER_METAL_LIB = $(WHISPER_BUILD)/ggml/src/ggml-metal/libggml-metal.a
 else
   # Linux ----------------------------------------------------------------
   FFMPEG_PLATFORM_FLAGS :=
@@ -61,7 +61,7 @@ WHISPER_LIBS := \
   $(WHISPER_BUILD)/src/libwhisper.a \
   $(WHISPER_BUILD)/ggml/src/libggml.a \
   $(WHISPER_BUILD)/ggml/src/libggml-base.a \
-  $(WHISPER_BUILD)/ggml/src/ggml-cpu/libggml-cpu.a \
+  $(WHISPER_BUILD)/ggml/src/libggml-cpu.a \
   $(WHISPER_METAL_LIB)
 
 # ---------------------------------------------------------------------------
@@ -76,10 +76,10 @@ CGO_LDFLAGS := \
   -L$(FFMPEG_PREFIX)/lib \
   -L$(WHISPER_BUILD)/src \
   -L$(WHISPER_BUILD)/ggml/src \
-  -L$(WHISPER_BUILD)/ggml/src/ggml-cpu \
   -lavformat -lavcodec -lswresample -lavfilter -lavutil \
   -lwhisper -lggml -lggml-base -lggml-cpu \
-  $(if $(WHISPER_METAL_LIB),-L$(WHISPER_BUILD)/ggml/src -lggml-metal) \
+  -L$(WHISPER_BUILD)/ggml/src/ggml-blas -lggml-blas \
+  $(if $(WHISPER_METAL_LIB),-L$(WHISPER_BUILD)/ggml/src/ggml-metal -lggml-metal) \
   $(PLATFORM_LDFLAGS) \
   -lstdc++ -lm -lpthread
 
