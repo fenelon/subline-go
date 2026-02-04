@@ -5,16 +5,24 @@ package main
 #include "whisper.h"
 */
 import "C"
+import "runtime"
 
-// DetectedLanguage returns the ISO-639-1 code of the language detected (or
-// used) during the most recent Transcribe call.  It reads the language id
-// stored in the context's default state, so it must be called after
-// Transcribe.
-func (m *WhisperModel) DetectedLanguage() string {
-	if m.ctx == nil {
+// DetectLanguage analyses the first 30 seconds of audio and returns the
+// ISO-639-1 code of the most likely language (e.g. "en", "ru").
+// This is a lightweight operation compared to full transcription.
+func (m *WhisperModel) DetectLanguage(samples []float32) string {
+	if m.ctx == nil || len(samples) == 0 {
 		return ""
 	}
-	id := C.whisper_full_lang_id(m.ctx)
+
+	// whisper_pcm_to_mel computes the mel spectrogram (uses first 30s).
+	ret := C.whisper_pcm_to_mel(m.ctx, (*C.float)(&samples[0]), C.int(len(samples)), C.int(runtime.NumCPU()))
+	if ret != 0 {
+		return ""
+	}
+
+	// whisper_lang_auto_detect returns the top language id.
+	id := C.whisper_lang_auto_detect(m.ctx, 0, C.int(runtime.NumCPU()), nil)
 	if id < 0 {
 		return ""
 	}

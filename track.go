@@ -1,20 +1,33 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
 
-// PickAudioTrack selects an audio stream index from the probed tracks.
-// If manual >= 0, it is used directly. Otherwise the function auto-selects:
+// clearLines moves the cursor up n lines and clears each one.
+func clearLines(n int) {
+	for i := 0; i < n; i++ {
+		fmt.Print("\033[A\033[2K")
+	}
+}
+
+// PickAudioTracks selects audio stream indices from the probed tracks.
+// If manual >= 0, it is used directly. Otherwise:
 //   - single track: returns it
-//   - multiple tracks: returns the first and prints a hint about --audio-track
-//   - no tracks: returns -1 and an error
-func PickAudioTrack(tracks []AudioTrack, manual int) (int, error) {
+//   - multiple tracks: presents an interactive menu with an "all" option
+//   - no tracks: returns nil and an error
+func PickAudioTracks(tracks []AudioTrack, manual int) ([]int, error) {
 	if manual >= 0 {
 		fmt.Printf("  Using audio track %d (manual)\n", manual)
-		return manual, nil
+		return []int{manual}, nil
 	}
 
 	if len(tracks) == 0 {
-		return -1, fmt.Errorf("no audio tracks found")
+		return nil, fmt.Errorf("no audio tracks found")
 	}
 
 	if len(tracks) == 1 {
@@ -24,28 +37,71 @@ func PickAudioTrack(tracks []AudioTrack, manual int) (int, error) {
 			lang = "und"
 		}
 		fmt.Printf("  Using audio track %d (%s)\n", t.StreamIndex, lang)
-		return t.StreamIndex, nil
+		return []int{t.StreamIndex}, nil
 	}
 
-	// Multiple tracks: use first, hint about --audio-track.
-	fmt.Print("  Audio tracks: [")
+	// Multiple tracks: interactive selection.
+	// Track lines printed so we can clear the menu after selection.
+	menuLines := 0
+
+	fmt.Println("  Multiple audio tracks found:")
+	menuLines++
 	for i, t := range tracks {
 		lang := t.Language
 		if lang == "" {
 			lang = "und"
 		}
-		if i > 0 {
-			fmt.Print(", ")
-		}
-		fmt.Printf("(%d, %s)", t.StreamIndex, lang)
+		fmt.Printf("    %d) stream %d — %s (%s, %dch, %dHz)\n",
+			i+1, t.StreamIndex, lang, t.Codec, t.Channels, t.SampleRate)
+		menuLines++
 	}
-	fmt.Println("]")
+	fmt.Printf("    a) all tracks\n")
+	menuLines++
 
-	t := tracks[0]
-	lang := t.Language
-	if lang == "" {
-		lang = "und"
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Printf("  Select track [1-%d or a]: ", len(tracks))
+		menuLines++
+		line, _ := reader.ReadString('\n')
+		line = strings.TrimSpace(line)
+
+		if strings.EqualFold(line, "a") || strings.EqualFold(line, "all") {
+			clearLines(menuLines)
+			fmt.Println("  Using all audio tracks")
+			indices := make([]int, len(tracks))
+			for i, t := range tracks {
+				indices[i] = t.StreamIndex
+			}
+			return indices, nil
+		}
+
+		n, err := strconv.Atoi(line)
+		if err == nil && n >= 1 && n <= len(tracks) {
+			clearLines(menuLines)
+			t := tracks[n-1]
+			lang := t.Language
+			if lang == "" {
+				lang = "und"
+			}
+			fmt.Printf("  Using audio track %d (%s)\n", t.StreamIndex, lang)
+			return []int{t.StreamIndex}, nil
+		}
+
+		fmt.Printf("  Invalid choice. Enter a number between 1 and %d, or 'a' for all.\n", len(tracks))
+		menuLines++
 	}
-	fmt.Printf("  Using first track %d (%s). Override with --audio-track N\n", t.StreamIndex, lang)
-	return t.StreamIndex, nil
+}
+
+// TrackLanguage returns the language for a given stream index from the tracks list,
+// or "und" if not found.
+func TrackLanguage(tracks []AudioTrack, streamIndex int) string {
+	for _, t := range tracks {
+		if t.StreamIndex == streamIndex {
+			if t.Language != "" {
+				return t.Language
+			}
+			return "und"
+		}
+	}
+	return "und"
 }

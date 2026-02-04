@@ -41,6 +41,7 @@ func TestIntegrationSRT(t *testing.T) {
 	cmd := exec.Command(binaryPath,
 		"--output-dir", tmpDir,
 		"--model", "tiny",
+		"--audio-track", "1",
 		"test/videos/fragment.mp4",
 	)
 	out, err := cmd.CombinedOutput()
@@ -81,6 +82,7 @@ func TestIntegrationVTT(t *testing.T) {
 		"--output-dir", tmpDir,
 		"--format", "vtt",
 		"--model", "tiny",
+		"--audio-track", "1",
 		"test/videos/fragment.mp4",
 	)
 	out, err := cmd.CombinedOutput()
@@ -119,6 +121,7 @@ func TestIntegrationSkipExisting(t *testing.T) {
 		"--output-dir", tmpDir,
 		"--skip-existing",
 		"--model", "tiny",
+		"--audio-track", "1",
 		"test/videos/fragment.mp4",
 	)
 	out, err := cmd.CombinedOutput()
@@ -145,6 +148,7 @@ func TestIntegrationOutputDir(t *testing.T) {
 	cmd := exec.Command(binaryPath,
 		"--output-dir", outDir,
 		"--model", "tiny",
+		"--audio-track", "1",
 		"test/videos/fragment.mp4",
 	)
 	out, err := cmd.CombinedOutput()

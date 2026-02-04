@@ -88,9 +88,9 @@ func TestTranscribeSilence(t *testing.T) {
 	}
 }
 
-// TestDetectedLanguage ensures the detected language helper works after
-// transcription.
-func TestDetectedLanguage(t *testing.T) {
+// TestDetectLanguage ensures the standalone language detection works
+// without running full transcription.
+func TestDetectLanguage(t *testing.T) {
 	modelPath, err := EnsureModel("tiny")
 	if err != nil {
 		t.Skip("Could not obtain tiny model:", err)
@@ -104,14 +104,9 @@ func TestDetectedLanguage(t *testing.T) {
 
 	samples := generateSineWave(440, 16000, 3)
 
-	_, err = model.Transcribe(samples, "", nil)
-	if err != nil {
-		t.Fatal("Transcription failed:", err)
-	}
-
-	lang := model.DetectedLanguage()
+	lang := model.DetectLanguage(samples)
 	if lang == "" {
-		t.Error("DetectedLanguage returned empty string after transcription")
+		t.Error("DetectLanguage returned empty string")
 	}
 	t.Logf("Detected language: %s", lang)
 }
@@ -138,11 +133,6 @@ func TestTranscribeWithLanguage(t *testing.T) {
 
 	if len(segments) == 0 {
 		t.Fatal("Expected at least one segment with explicit language")
-	}
-
-	lang := model.DetectedLanguage()
-	if lang != "en" {
-		t.Errorf("Expected detected language 'en', got %q", lang)
 	}
 }
 
