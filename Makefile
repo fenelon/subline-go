@@ -85,6 +85,9 @@ CGO_LDFLAGS := \
 
 PKG_CONFIG_PATH := $(FFMPEG_PREFIX)/lib/pkgconfig
 
+# Version: use git tag if available, otherwise "dev".
+VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+
 # ===================================================================
 # TARGETS
 # ===================================================================
@@ -160,7 +163,7 @@ subline: ffmpeg whisper
 	CGO_CFLAGS="$(CGO_CFLAGS)" \
 	CGO_LDFLAGS="$(CGO_LDFLAGS)" \
 	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)" \
-	go build -o $(ROOT_DIR)/subline .
+	go build -ldflags "-X main.Version=$(VERSION)" -o $(ROOT_DIR)/subline .
 
 # -------------------------------------------------------------------
 # Clean
