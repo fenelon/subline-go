@@ -1,7 +1,12 @@
-<div align="center">
-
-# SUBLINE
+<pre style="background:transparent">
+███████╗██╗   ██╗██████╗ ██╗     ██╗███╗   ██╗███████╗
+██╔════╝██║   ██║██╔══██╗██║     ██║████╗  ██║██╔════╝
+███████╗██║   ██║██████╔╝██║     ██║██╔██╗ ██║█████╗  
+╚════██║██║   ██║██╔══██╗██║     ██║██║╚██╗██║██╔══╝  
+███████║╚██████╔╝██████╔╝███████╗██║██║ ╚████║███████╗
+╚══════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝╚═╝  ╚═══╝╚══════╝
 AI subtitles made easy
+</pre>
 
 **Generate subtitles for any video or audio file, right from your terminal.**
 
@@ -12,8 +17,6 @@ Built on [whisper.cpp](https://github.com/ggerganov/whisper.cpp) with Metal GPU 
 <br>
 
 <img width="912" height="744" alt="SCR-20260204-tzho" src="https://github.com/user-attachments/assets/e8fdf01e-496a-4e31-9df7-e0d29827e3ae" />
-
-</div>
 
 <br>
 
