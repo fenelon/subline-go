@@ -1,0 +1,13 @@
+# Build artifacts
+/subline
+/build/
+
+# Models
+models/
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
